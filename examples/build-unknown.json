@@ -1,0 +1,8 @@
+{
+  "check": "build",
+  "intent": "DEMO: requesting a build before inspecting the running pipeline",
+  "facts": {
+    "buildProhibited": { "value": false, "evidence": "Example: the user requested a fix and verification without prohibiting builds." },
+    "pipelineOwnsBuild": { "value": "unknown" }
+  }
+}

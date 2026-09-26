@@ -1,0 +1,9 @@
+{
+  "check": "complete",
+  "intent": "DEMO: claiming completion after HTTP 200 without a fresh-read check",
+  "facts": {
+    "focusedVerificationPassed": { "value": true, "evidence": "Example: the focused request returned HTTP 200 and the field appeared." },
+    "persistenceProofRequired": { "value": true, "evidence": "Example: the task changes a persisted profile field." },
+    "persistenceVerified": { "value": false, "evidence": "Example: the test stopped at the HTTP response without a fresh read." }
+  }
+}
