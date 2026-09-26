@@ -1,0 +1,10 @@
+{
+  "check": "before-edit",
+  "intent": "DEMO: editing code before identifying where the data becomes incorrect",
+  "facts": {
+    "editProhibited": { "value": false, "evidence": "Example: the user requested a fix." },
+    "failureObserved": { "value": true, "evidence": "Example: the saved field is missing on a fresh read." },
+    "expectedBehaviorEstablished": { "value": true, "evidence": "Example: the request requires the field to survive saving." },
+    "firstWrongBoundaryKnown": { "value": false, "evidence": "Example: the DTO, mapper and persistence have not been checked separately." }
+  }
+}
