@@ -1,0 +1,14 @@
+[
+  {
+    "repository": "myscoutee-agent",
+    "original_commit": "b2fc6083457fd2c86681fb294725c9c61b2e333e",
+    "task_commit": "6c571de454dda2581a328f1594c8cffa9a0ce5a4",
+    "task_ids": [
+      "MSC-99"
+    ],
+    "original_source_tree": "16705890351c4b22b65664120a76b69356e5532a",
+    "original_execution_start": "2026-09-26T06:52:39+02:00",
+    "original_execution_end": "2026-09-26T07:14:32+02:00",
+    "original_commit_count": 2
+  }
+]

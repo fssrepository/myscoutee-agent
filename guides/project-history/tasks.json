@@ -1,0 +1,30 @@
+[
+  {
+    "task_id": "MSC-99",
+    "title": "Build the standalone trust decision agent",
+    "workstream": "Tooling",
+    "started": "2026-09-26",
+    "finished": "2026-09-26",
+    "tokens_million": 3.01,
+    "api_equivalent_usd_estimate": 5.84,
+    "active_hours": 0.2,
+    "allocated_hours": 0.12,
+    "models": "gpt-6-astra",
+    "reasoning": "high",
+    "evidence": "Estimated task allocation of measured daily account totals"
+  },
+  {
+    "task_id": "MSC-110",
+    "title": "Reconstruct the Project and preserve restorable Git records",
+    "workstream": "Project administration (AI-assisted)",
+    "started": "2026-09-30",
+    "finished": "2026-10-01",
+    "tokens_million": 12.0,
+    "api_equivalent_usd_estimate": 18.47,
+    "active_hours": 0.749,
+    "allocated_hours": 0.75,
+    "models": "gpt-6-astra",
+    "reasoning": "high",
+    "evidence": "Measured maintenance-session tokens; estimated allocation by backup snapshot ownership (9:2:2:2 across four Projects)"
+  }
+]
