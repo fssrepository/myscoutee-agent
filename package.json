@@ -1,0 +1,30 @@
+{
+  "name": "@fssrepository/myscoutee-agent",
+  "version": "1.5.0",
+  "description": "Dependency-free advisory trust decision CLI for MyScoutee",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "myscoutee-trust": "./trust.mjs"
+  },
+  "exports": "./src/trust.mjs",
+  "files": [
+    "trust.mjs",
+    "src/",
+    "examples/",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test test/trust.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fssrepository/myscoutee-agent.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

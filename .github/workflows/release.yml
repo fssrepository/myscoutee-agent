@@ -1,0 +1,74 @@
+name: Release trust CLI package
+
+on:
+  push:
+    tags: ['v[0-9]*.[0-9]*.[0-9]*']
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: myscoutee-agent
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: myscoutee-agent
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: fssrepository/myscoutee-skills
+          ref: v1.5.0
+          path: myscoutee-skills
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          registry-url: https://npm.pkg.github.com
+          scope: '@fssrepository'
+      - name: Verify version and test native CLI
+        run: |
+          node --input-type=module -e 'import p from "./package.json" with {type:"json"}; if (process.env.GITHUB_REF_NAME !== `v${p.version}`) process.exit(1)'
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm test
+      - name: Pack and test installed entry point
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack --pack-destination "$RUNNER_TEMP"
+          archive="$RUNNER_TEMP/fssrepository-myscoutee-agent-${GITHUB_REF_NAME#v}.tgz"
+          npm install --prefix "$RUNNER_TEMP/consumer" "$archive" --ignore-scripts --no-audit --no-fund
+          "$RUNNER_TEMP/consumer/node_modules/.bin/myscoutee-trust" examples/build-running.json \
+            --skills "$GITHUB_WORKSPACE/myscoutee-skills" > "$RUNNER_TEMP/decision.json"
+          node --input-type=module -e 'import {readFileSync} from "node:fs"; import assert from "node:assert/strict"; assert.equal(JSON.parse(readFileSync(process.argv[1])).decision,"USE_EXISTING_PIPELINE")' "$RUNNER_TEMP/decision.json"
+      - name: Publish and verify registry artifact
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          archive="$RUNNER_TEMP/fssrepository-myscoutee-agent-$version.tgz"
+          npm publish "$archive" --registry=https://npm.pkg.github.com
+          expected="$(node --input-type=module -e 'import {createHash} from "node:crypto"; import {readFileSync} from "node:fs"; console.log("sha512-"+createHash("sha512").update(readFileSync(process.argv[1])).digest("base64"))' "$archive")"
+          actual="$(npm view "@fssrepository/myscoutee-agent@$version" dist.integrity --registry=https://npm.pkg.github.com)"
+          [[ "$actual" == "$expected" ]]
+      - name: Publish release archive
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          archive="$RUNNER_TEMP/fssrepository-myscoutee-agent-$version.tgz"
+          (cd "$RUNNER_TEMP" && sha256sum "$(basename "$archive")") > "$RUNNER_TEMP/SHA256SUMS"
+          printf 'MSC-127: dependency-free trust CLI **%s**, Node.js 22+.\n\nPackage: `@fssrepository/myscoutee-agent@%s` at `https://npm.pkg.github.com`.\n\nSource: `%s`. Native tests and the installed package entry point passed; registry integrity matches the tarball. Supply the existing skills checkout with `--skills`; no policy copy is bundled.\n' "$version" "$version" "$GITHUB_SHA" > "$RUNNER_TEMP/release-notes.md"
+          gh release create "$GITHUB_REF_NAME" "$archive" "$RUNNER_TEMP/SHA256SUMS" --verify-tag \
+            --repo "$GITHUB_REPOSITORY" --title "MyScoutee Agent $version" --notes-file "$RUNNER_TEMP/release-notes.md"

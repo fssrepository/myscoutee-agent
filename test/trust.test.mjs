@@ -108,7 +108,7 @@ test('Missing policy sources and malformed JSON produce an error, not an advisor
     const malformed = path.join(directory, 'bad.json');
     writeFileSync(malformed, '{');
     for (const args of [
-      [path.join(root, 'examples/build-running.json'), '--backend', directory],
+      [path.join(root, 'examples/build-running.json'), '--skills', directory],
       [malformed],
     ]) {
       const run = spawnSync(process.execPath, [path.join(root, 'trust.mjs'), ...args], { encoding: 'utf8' });

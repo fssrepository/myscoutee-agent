@@ -10,11 +10,11 @@ node trust.mjs examples/build-running.json
 node --test test/trust.test.mjs
 ```
 
-Run these commands from `myscoutee-agent`. The sibling `myscoutee-backend`
-repository owns the policy documents. To use a different location:
+Run these commands from `myscoutee-agent`. The sibling `myscoutee-skills`
+repository owns the policy documents. To use a different skills checkout:
 
 ```bash
-node trust.mjs examples/build-running.json --backend /path/to/myscoutee-backend
+node trust.mjs examples/build-running.json --skills /path/to/myscoutee-skills
 ```
 
 ## A concrete example
@@ -95,15 +95,15 @@ handwritten branches still match a later policy revision.
 
 ## Reusing the existing trust library
 
-The backend `.agents/trust` directory remains the policy owner. This repository
+The `myscoutee-skills` repository owns the policy library. This repository
 implements a few explicit branches without copying the entire library. The CLI
 checks that referenced source files are available and fingerprints them.
 When policy changes, review the corresponding branch and tests together.
 
 The two existing references are:
 
-- `../myscoutee-backend/.agents/trust/kernel.md`: policy and selective loading.
-- `../myscoutee-backend/tools/trust/run-trust-evals.mjs`: the existing model
+- `../myscoutee-skills/.agents/trust/kernel.md`: policy and selective loading.
+- `../myscoutee-skills/tools/trust/run-trust-evals.mjs`: the existing model
   evaluation runner. It evaluates agent behavior rather than individual actions.
 
 The missing capability is the small decision function implemented here. Its
@@ -118,3 +118,21 @@ response still consumes model context, and investigating the facts remains
 work. JSON output is compact by default; the demo is formatted for readability.
 Token savings have not been measured. Compare total agent usage on equivalent
 tasks with equal correctness; a shorter response alone does not prove savings.
+
+## Package release
+
+Version `1.5.0` is published as `@fssrepository/myscoutee-agent` in GitHub
+Packages, with its tarball and SHA-256 checksum attached to the GitHub release.
+No package installation is needed to run the source checkout above.
+
+With authenticated access to `https://npm.pkg.github.com`, install the package
+and use the existing CLI directly:
+
+```bash
+npm install @fssrepository/myscoutee-agent@1.5.0 --registry=https://npm.pkg.github.com
+npx myscoutee-trust request.json --skills /path/to/myscoutee-skills
+```
+
+The package has no dependencies and does not bundle policy documents. An installed
+package must receive the canonical skills checkout through `--skills`. Library
+consumers can import `evaluateTrust` from `@fssrepository/myscoutee-agent`.
