@@ -1,0 +1,15 @@
+{
+  "project": "myscoutee-agent",
+  "type": "npm",
+  "depends_on": [
+    "myscoutee-skills"
+  ],
+  "fixtures": [
+    "myscoutee-skills"
+  ],
+  "variables": {
+    "LAB_GITHUB_REPOSITORY": "fssrepository/myscoutee-agent"
+  },
+  "release_notes": "guides/releases/v{version}.md",
+  "release_name": "MyScoutee Agent"
+}
